@@ -1,33 +1,22 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lotto Number Generator</title>
+    <title>Top 100 Korean Souvenirs</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <h1>Lotto Number Generator</h1>
-        <div class="numbers">
-            <span class="number"></span>
-            <span class="number"></span>
-            <span class="number"></span>
-            <span class="number"></span>
-            <span class="number"></span>
-            <span class="number"></span>
-        </div>
-        <button id="generate">Generate Numbers</button>
-        <div class="toggle-container">
-            <label class="switch">
-                <input type="checkbox" id="theme-toggle">
-                <span class="slider round"></span>
-            </label>
-        </div>
+        <header>
+            <h1>Top 100 Korean Souvenirs for Foreigners</h1>
+            <div class="search-container">
+                <input type="text" id="search-box" placeholder="Search for a souvenir...">
+            </div>
+        </header>
+        <main id="souvenir-grid" class="souvenir-grid">
+            <!-- Souvenirs will be dynamically inserted here -->
+        </main>
     </div>
     <script src="main.js"></script>
 </body>
