@@ -10,22 +10,35 @@
     <header>
         <nav class="navbar">
             <div class="nav-logo">
-                <a href="#">K-Souvenir</a>
+                <a href="#" data-translate-key="logo">K-Souvenir</a>
             </div>
             <ul class="nav-menu">
-                <li class="nav-item"><a href="#" class="nav-link">소개</a></li>
+                <li class="nav-item"><a href="#" class="nav-link" data-translate-key="nav_intro">소개</a></li>
                 <li class="nav-item dropdown">
-                    <a href="#" class="nav-link">기념품</a>
+                    <a href="#" class="nav-link" data-translate-key="nav_souvenirs">기념품</a>
                     <ul class="dropdown-menu">
-                        <li><a href="#" data-category="all">전체보기</a></li>
-                        <li><a href="#" data-category="화장품">화장품</a></li>
-                        <li><a href="#" data-category="식품">식품</a></li>
-                        <li><a href="#" data-category="의류">의류</a></li>
-                        <li><a href="#" data-category="전통 상품">전통 상품</a></li>
-                        <li><a href="#" data-category="K-POP 굿즈">K-POP 굿즈</a></li>
+                        <li><a href="#" data-category="all" data-translate-key="cat_all">전체보기</a></li>
+                        <li><a href="#" data-category="화장품" data-translate-key="cat_cosmetics">화장품</a></li>
+                        <li><a href="#" data-category="식품" data-translate-key="cat_food">식품</a></li>
+                        <li><a href="#" data-category="의류" data-translate-key="cat_clothing">의류</a></li>
+                        <li><a href="#" data-category="전통 상품" data-translate-key="cat_traditional">전통 상품</a></li>
+                        <li><a href="#" data-category="K-POP 굿즈" data-translate-key="cat_kpop">K-POP 굿즈</a></li>
                     </ul>
                 </li>
-                <li class="nav-item"><a href="#" class="nav-link">검색</a></li>
+                <li class="nav-item">
+                    <div class="search-container">
+                        <input type="search" id="searchInput" data-translate-key="search_placeholder" placeholder="기념품 검색...">
+                        <button id="searchBtn" data-translate-key="search_button">검색</button>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">Lang</a>
+                    <ul class="dropdown-menu" id="lang-switcher">
+                        <li><a href="#" data-lang="ko">한국어</a></li>
+                        <li><a href="#" data-lang="en">English</a></li>
+                        <li><a href="#" data-lang="ja">日本語</a></li>
+                    </ul>
+                </li>
             </ul>
         </nav>
     </header>
