@@ -1,9 +1,6 @@
 # Dependencies
 /node_modules
 
-# Generated assets
-/public/
-
 # Secrets & Keys
 gemini-key.json
 *.log
