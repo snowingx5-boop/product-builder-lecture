@@ -51,7 +51,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const item = document.createElement('div');
             item.className = 'souvenir-item';
             if (souvenir.name === '김치') {
-                item.id = 'souvenir-kimchi'; // Add specific ID for kimchi
+                item.style.backgroundImage = "url('public/images/kimchi.jpg')";
+                item.style.backgroundSize = 'cover';
+                item.style.backgroundPosition = 'center';
+                item.style.color = 'white';
+                item.style.textShadow = '1px 1px 2px rgba(0,0,0,0.7)';
             }
             item.textContent = souvenir.name;
             grid.appendChild(item);
