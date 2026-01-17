@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const item = document.createElement('div');
             item.className = 'souvenir-item';
             if (souvenir.name === '김치') {
-                item.style.backgroundImage = "url('public/images/kimchi.jpg')";
+                item.style.backgroundImage = "url('https://raw.githubusercontent.com/snowingx5-boop/product-builder-lecture/main/public/images/kimchi.jpg')";
                 item.style.backgroundSize = 'cover';
                 item.style.backgroundPosition = 'center';
                 item.style.color = 'white';
