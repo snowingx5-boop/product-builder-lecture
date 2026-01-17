@@ -50,6 +50,9 @@ document.addEventListener('DOMContentLoaded', function() {
         items.forEach(souvenir => {
             const item = document.createElement('div');
             item.className = 'souvenir-item';
+            if (souvenir.name === '김치') {
+                item.id = 'souvenir-kimchi'; // Add specific ID for kimchi
+            }
             item.textContent = souvenir.name;
             grid.appendChild(item);
         });
