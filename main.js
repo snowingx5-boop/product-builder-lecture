@@ -92,8 +92,14 @@ document.addEventListener('DOMContentLoaded', function() {
             nameSpan.textContent = souvenir.name[currentLang];
             item.appendChild(nameSpan);
 
-            if (souvenir.name.ko === '김치') { // Use KO name as a unique ID
-                item.style.backgroundImage = "url('https://raw.githubusercontent.com/snowingx5-boop/product-builder-lecture/main/public/images/kimchi.jpg')";
+            const koName = souvenir.name.ko;
+            if (koName === '김치' || koName === '고추장' || koName === '된장') {
+                let imageName = '';
+                if (koName === '김치') imageName = 'kimchi';
+                if (koName === '고추장') imageName = 'gochujang';
+                if (koName === '된장') imageName = 'doenjang';
+                
+                item.style.backgroundImage = `url('https://raw.githubusercontent.com/snowingx5-boop/product-builder-lecture/main/public/images/${imageName}.jpg')`;
                 item.style.backgroundSize = 'cover';
                 item.style.backgroundPosition = 'center';
                 nameSpan.style.color = 'white';
