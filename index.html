@@ -7,17 +7,35 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Top 100 Korean Souvenirs for Foreigners</h1>
-            <div class="search-container">
-                <input type="text" id="search-box" placeholder="Search for a souvenir...">
+    <header>
+        <nav class="navbar">
+            <div class="nav-logo">
+                <a href="#">K-Souvenir</a>
             </div>
-        </header>
-        <main id="souvenir-grid" class="souvenir-grid">
-            <!-- Souvenirs will be dynamically inserted here -->
-        </main>
-    </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#" class="nav-link">소개</a></li>
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link">기념품</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" data-category="all">전체보기</a></li>
+                        <li><a href="#" data-category="화장품">화장품</a></li>
+                        <li><a href="#" data-category="식품">식품</a></li>
+                        <li><a href="#" data-category="의류">의류</a></li>
+                        <li><a href="#" data-category="전통 상품">전통 상품</a></li>
+                        <li><a href="#" data-category="K-POP 굿즈">K-POP 굿즈</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item"><a href="#" class="nav-link">검색</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="souvenir-grid">
+        <!-- 기념품 아이템들이 여기에 동적으로 추가됩니다. -->
+    </main>
+
+    <button id="scrollToTopBtn" title="Go to top">▲</button>
+
     <script src="main.js"></script>
 </body>
 </html>
