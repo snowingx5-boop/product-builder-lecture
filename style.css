@@ -105,7 +105,7 @@ body {
 }
 
 #souvenir-kimchi {
-    background-image: url('./public/images/kimchi.jpg');
+    background-image: url('public/images/kimchi.jpg');
     background-size: cover;
     background-position: center;
     color: white; /* 텍스트 가독성을 위해 */
