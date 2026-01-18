@@ -7,7 +7,7 @@ const { helpers } = require('@google-cloud/aiplatform');
 const PROJECT_ID = 'jocoding-week1-04038098-1c9c8';
 const LOCATION = 'us-central1';
 const MODEL_ID = 'imagegeneration@006'; // Using a stable version of Imagen
-const OUTPUT_FILE = './public/images/kimchi.jpg';
+const OUTPUT_FILE = './public/images/doenjang.jpg';
 
 const clientOptions = {
   apiEndpoint: 'us-central1-aiplatform.googleapis.com',
@@ -16,12 +16,12 @@ const clientOptions = {
 const predictionServiceClient = new PredictionServiceClient(clientOptions);
 
 async function generateImage() {
-  console.log('--- Starting Image Generation ---');
+  console.log('--- Starting Image Generation for Doenjang ---');
 
   const endpoint = `projects/${PROJECT_ID}/locations/${LOCATION}/publishers/google/models/${MODEL_ID}`;
 
   const prompt = {
-    prompt: 'delicious spicy kimchi, high resolution, 400x400, studio quality, food photography',
+    prompt: 'a bowl of Doenjang (Korean soybean paste), high resolution, 400x400, studio quality, food photography',
   };
   const instanceValue = helpers.toValue(prompt);
   const instances = [instanceValue];
