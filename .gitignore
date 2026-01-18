@@ -4,3 +4,6 @@
 # Secrets & Keys
 gemini-key.json
 *.log
+
+# IDE files
+.idx/
