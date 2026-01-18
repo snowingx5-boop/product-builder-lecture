@@ -19,12 +19,12 @@ const predictionServiceClient = new PredictionServiceClient(clientOptions);
 // Function to read souvenirs from main.js
 function getSouvenirs() {
   const mainJsContent = fs.readFileSync(MAIN_JS_PATH, 'utf8');
-  const startMarker = 'const souvenirs = [';
+  const startMarker = 'const initialSouvenirs = [';
   const endMarker = '];';
 
   const startIndex = mainJsContent.indexOf(startMarker);
   if (startIndex === -1) {
-    console.error('Could not find start marker for souvenirs array in main.js.');
+    console.error('Could not find start marker for initialSouvenirs array in main.js.');
     return [];
   }
 
@@ -34,7 +34,7 @@ function getSouvenirs() {
   let bracketCount = 0;
   let endIndex = -1;
   // Start from just before the first '[' to correctly count
-  for (let i = startIndex + 'const souvenirs = '.length; i < mainJsContent.length; i++) {
+  for (let i = startIndex + 'const initialSouvenirs = '.length -1; i < mainJsContent.length; i++) {
     if (mainJsContent[i] === '[') {
       bracketCount++;
     } else if (mainJsContent[i] === ']') {
@@ -47,12 +47,12 @@ function getSouvenirs() {
   }
 
   if (endIndex === -1) {
-    console.error('Could not find end marker for souvenirs array in main.js.');
+    console.error('Could not find end marker for initialSouvenirs array in main.js.');
     return [];
   }
 
   const jsonLikeString = mainJsContent.substring(
-    startIndex + 'const souvenirs = '.length -1, // Include the opening '['
+    startIndex + 'const initialSouvenirs = '.length -1, // Include the opening '['
     endIndex + 1 // Include the closing ']'
   );
 
@@ -62,7 +62,7 @@ function getSouvenirs() {
     const souvenirs = eval(jsonLikeString);
     return souvenirs;
   } catch (e) {
-    console.error('Error parsing souvenirs array from main.js:', e);
+    console.error('Error parsing initialSouvenirs array from main.js:', e);
     // console.error('Problematic string:', jsonLikeString); // Uncomment for debugging
     return [];
   }
@@ -94,10 +94,24 @@ async function generateImageForSouvenir(souvenir) {
 
   const endpoint = `projects/${PROJECT_ID}/locations/${LOCATION}/publishers/google/models/${MODEL_ID}`;
 
-  const promptText = `high resolution photo of ${koName} (Korean souvenir), studio quality, 400x400, clear background, product photography`;
+  const promptModifiers = {
+    "식품": "on a wooden table, with natural lighting, focus on deliciousness, appetizing",
+    "화장품": "elegant packaging, on a vanity, luxurious, smooth texture",
+    "의류": "worn by a model, fashion photography, well-styled, on a mannequin",
+    "전통 상품": "in a traditional Korean setting, handcrafted, intricate details, cultural significance",
+    "K-POP 굿즈": "fan merchandise, vibrant colors, pop culture aesthetic, idol related"
+  };
+
+  let specificModifier = promptModifiers[souvenir.category] || "";
+  if (specificModifier) {
+      specificModifier = `, ${specificModifier}`;
+  }
+
+  const promptText = `high resolution photo of ${koName} (Korean souvenir)${specificModifier}, studio quality, 400x400, clear background, product photography`;
   const prompt = {
     prompt: promptText,
   };
+
   const instanceValue = helpers.toValue(prompt);
   const instances = [instanceValue];
 
