@@ -104,22 +104,27 @@ async function generateImageForSouvenir(souvenir) {
 
   const skipList = ["김치", "고추장", "된장", "쌈장"]; 
 
-  let finalPromptText = '';
-  if (skipList.includes(koName)) {
-      console.log('--- Skipping image generation for "' + koName + '" as it\'s in the skip list within generateImageForSouvenir ---');
-      return null; // Return null if skipped
-  } else if (koName === '쌈장') {
-      finalPromptText = 'high resolution photo of Korean ssamjang paste in a traditional ceramic bowl, with fresh ssam (lettuce wraps) and grilled meat in the background, studio quality, 400x400, clear background, product photography, appetizing, delicious';
-  } else {
-      const descriptionEn = souvenir.description.en; 
-      let specificModifier = promptModifiers[souvenir.category] || "";
-      if (specificModifier) {
-          specificModifier = ", " + specificModifier;
+      const problematicItems = [
+        "연예인 화보집"
+      ];
+    
+      let finalPromptText = '';
+      if (skipList.includes(koName)) {
+          console.log('--- Skipping image generation for "' + koName + '" as it\'s in the skip list within generateImageForSouvenir ---');
+          return null; // Return null if skipped
+      } else if (koName === '쌈장') {
+          finalPromptText = 'high resolution photo of Korean ssamjang paste in a traditional ceramic bowl, with fresh ssam (lettuce wraps) and grilled meat in the background, studio quality, 400x400, clear background, product photography, appetizing, delicious';
+      } else if (problematicItems.includes(koName)) {
+          finalPromptText = 'high resolution photo of a photobook, product photography, studio quality, 400x400, clear background';
       }
-      finalPromptText = 'high resolution photo of ' + koName + ', ' + descriptionEn + specificModifier + ', studio quality, 400x400, clear background, product photography';
-  }
-  
-  const prompt = {
+      else {
+          const descriptionEn = souvenir.description.en; 
+          let specificModifier = promptModifiers[souvenir.category] || "";
+          if (specificModifier) {
+              specificModifier = ", " + specificModifier;
+          }
+          finalPromptText = 'high resolution photo of ' + koName + ', ' + descriptionEn + specificModifier + ', studio quality, 400x400, clear background, product photography';
+      }  const prompt = {
     prompt: finalPromptText,
   };
 
