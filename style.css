@@ -69,6 +69,10 @@ header {
     display: block;
 }
 
+.dropdown:hover {
+    z-index: 1001; /* Ensure hovered dropdown is on top */
+}
+
 .dropdown-menu li a {
     text-decoration: none;
     color: #333;
