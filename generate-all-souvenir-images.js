@@ -82,17 +82,17 @@ function slugify(text) {
 async function generateImageForSouvenir(souvenir) {
   const koName = souvenir.name.ko;
   const slugName = slugify(koName);
-  const outputFile = path.join(OUTPUT_DIR, `${slugName}.jpg`);
+  const outputFile = path.join(OUTPUT_DIR, slugName + '.jpg');
 
   // Skip if image already exists
   if (fs.existsSync(outputFile)) {
-    console.log(`Image for "${koName}" already exists at ${outputFile}. Skipping.`);
+    console.log('Image for "' + koName + '" already exists at ' + outputFile + '. Skipping.');
     return;
   }
 
-  console.log(`--- Starting Image Generation for "${koName}" ---`);
+  console.log('--- Starting Image Generation for "' + koName + '" ---');
 
-  const endpoint = `projects/${PROJECT_ID}/locations/${LOCATION}/publishers/google/models/${MODEL_ID}`;
+  const endpoint = 'projects/' + PROJECT_ID + '/locations/' + LOCATION + '/publishers/google/models/' + MODEL_ID;
 
   const promptModifiers = {
     "식품": "on a wooden table, with natural lighting, focus on deliciousness, appetizing",
@@ -102,14 +102,25 @@ async function generateImageForSouvenir(souvenir) {
     "K-POP 굿즈": "fan merchandise, vibrant colors, pop culture aesthetic, idol related"
   };
 
-  let specificModifier = promptModifiers[souvenir.category] || "";
-  if (specificModifier) {
-      specificModifier = `, ${specificModifier}`;
-  }
+  const skipList = ["김치", "고추장", "된장", "쌈장"]; 
 
-  const promptText = `high resolution photo of ${koName} (Korean souvenir)${specificModifier}, studio quality, 400x400, clear background, product photography`;
+  let finalPromptText = '';
+  if (skipList.includes(koName)) {
+      console.log('--- Skipping image generation for "' + koName + '" as it\'s in the skip list within generateImageForSouvenir ---');
+      return null; // Return null if skipped
+  } else if (koName === '쌈장') {
+      finalPromptText = 'high resolution photo of Korean ssamjang paste in a traditional ceramic bowl, with fresh ssam (lettuce wraps) and grilled meat in the background, studio quality, 400x400, clear background, product photography, appetizing, delicious';
+  } else {
+      const descriptionEn = souvenir.description.en; 
+      let specificModifier = promptModifiers[souvenir.category] || "";
+      if (specificModifier) {
+          specificModifier = ", " + specificModifier;
+      }
+      finalPromptText = 'high resolution photo of ' + koName + ', ' + descriptionEn + specificModifier + ', studio quality, 400x400, clear background, product photography';
+  }
+  
   const prompt = {
-    prompt: promptText,
+    prompt: finalPromptText,
   };
 
   const instanceValue = helpers.toValue(prompt);
@@ -127,29 +138,29 @@ async function generateImageForSouvenir(souvenir) {
   };
 
   try {
-    console.log(`Sending request to Vertex AI for "${koName}"...`);
+    console.log('Sending request to Vertex AI for "' + koName + '"...');
     const [response] = await predictionServiceClient.predict(request);
-    console.log(`Received response for "${koName}".`);
+    console.log('Received response for "' + koName + '".');
 
     const predictions = response.predictions;
     if (!predictions || predictions.length === 0) {
-      console.error(`No predictions returned from the API for "${koName}".`);
-      return;
+      console.error('No predictions returned from the API for "' + koName + '".');
+      return null;
     }
 
     const imageBase64 = predictions[0].structValue.fields.bytesBase64Encoded.stringValue;
 
     if (!imageBase64) {
-      console.error(`Could not find image data in the API response for "${koName}".`);
-      return;
+      console.error('Could not find image data in the API response for "' + koName + '".');
+      return null;
     }
     
-    console.log(`Decoding base64 image and saving to ${outputFile}...`);
+    console.log('Decoding base64 image and saving to ' + outputFile + '...');
     fs.writeFileSync(outputFile, Buffer.from(imageBase64, 'base64'));
-    console.log(`✅ Successfully saved image for "${koName}" to ${outputFile}`);
+    console.log('✅ Successfully saved image for "' + koName + '" to ' + outputFile);
     return slugName + '.jpg'; // Return the filename
   } catch (error) {
-    console.error(`--- ERROR DURING IMAGE GENERATION for "${koName}" ---`);
+    console.error('--- ERROR DURING IMAGE GENERATION for "' + koName + '" ---');
     console.error(error.message || error);
     if (error.details) {
         console.error('Error Details:', error.details);
@@ -167,23 +178,9 @@ async function main() {
   const generatedImageMap = {}; // To store generated filenames
 
   for (const souvenir of allSouvenirs) {
-    const koName = souvenir.name.ko;
-
-    // Skip the 3 hardcoded images from main.js as they already exist
-    if (koName === '김치' || koName === '고추장' || koName === '된장') {
-        console.log(`Skipping "${koName}" as it has a hardcoded image.`);
-        continue;
-    }
-
-    // Check if the souvenir already has an imageUrl (for re-runs)
-    if (souvenir.imageUrl) {
-        console.log(`Souvenir "${koName}" already has an imageUrl. Skipping.`);
-        continue;
-    }
-
     const generatedFilename = await generateImageForSouvenir(souvenir);
     if (generatedFilename) {
-        generatedImageMap[koName] = generatedFilename;
+        generatedImageMap[souvenir.name.ko] = generatedFilename;
     }
   }
 
