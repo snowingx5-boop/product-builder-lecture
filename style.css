@@ -39,12 +39,13 @@ header {
     z-index: 1000; /* 드롭다운 메뉴가 다른 콘텐츠 위에 표시되도록 설정 */
 }
 
-.nav-link {
+.nav-link, #lang-switcher .lang-button {
     text-decoration: none;
     color: #555;
     font-weight: bold;
     padding: 5px 10px;
     transition: color 0.3s ease;
+    vertical-align: middle; /* Added for vertical alignment */
 }
 
 .nav-link:hover {
