@@ -1,6 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     let currentLang = 'ko'; // 기본 언어 설정
 
+    // Function to convert Korean name to a slug for filename
+    function slugify(text) {
+      return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/[^\uAC00-\uD7A3a-z0-9-]/g, '') // Keep Korean, lowercase alphanumeric, and hyphens
+        .replace(/\s+/g, '-')
+        .replace(/--+/g, '-');
+    }
+
     // 다국어 텍스트 데이터
     const translations = {
         logo: { ko: "K-Souvenir", en: "K-Souvenir", ja: "K-Souvenir" },
@@ -16,10 +27,10 @@ document.addEventListener('DOMContentLoaded', function() {
         search_button: { ko: "검색", en: "Search", ja: "検索" }
     };
 
-    const souvenirs = [
+    const initialSouvenirs = [
         // 식품
-        { name: { ko: "김치", en: "Kimchi", ja: "キムチ" }, category: "식품", description: { ko: "한국의 대표적인 발효 음식으로, 맵고 짭짤한 맛이 특징입니다. 다양한 요리에 활용됩니다.", en: "Kimchi is a staple in Korean cuisine, a traditional side dish of salted and fermented vegetables. It's spicy and savory.", ja: "韓国の代表的な発酵食品で、辛くて塩辛い味が特徴です。様々な料理に活用されます。" } },
-        { name: { ko: "고추장", en: "Gochujang", ja: "コチュジャン" }, category: "식품", description: { ko: "매콤하면서도 달콤한 맛이 나는 한국의 전통 발효 고추장입니다. 비빔밥, 떡볶이 등에 사용됩니다.", en: "Gochujang is a savory, sweet, and spicy fermented condiment, central to Korean cooking. Used in dishes like bibimbap and tteokbokki.", ja: "辛くて甘い味がする韓国の伝統発酵コチュジャン입니다. 비빔밥, 떡볶이 등에 사용됩니다。" } },
+        { name: { ko: "김치", en: "Kimchi", ja: "キムチ" }, category: "식품", description: { ko: "한국의 대표적인 발효 음식으로, 맵고 짭짤한 맛이 특징입니다. 다양한 요리에 활용됩니다.", en: "Kimchi is a staple in Korean cuisine, a traditional side dish of salted and fermented vegetables. It's spicy and savory.", ja: "韓国의 대표적인 발효 음식으로, 맵고 짭짤한 맛이 특징입니다. 다양한 요리에 활용됩니다。" } },
+        { name: { ko: "고추장", en: "Gochujang", ja: "コチュジャン" }, category: "식품", description: { ko: "매콤하면서도 달콤한 맛이 나는 한국의 전통 발효 고추장입니다. 비빔밥, 떡볶이 등에 사용됩니다.", en: "Gochujang is a savory, sweet, and spicy fermented condiment, central to Korean cooking. Used in dishes like bibimbap and tteokbokki.", ja: "辛くて甘い味がする韓国의 전통 발효 고추장입니다. 비빔밥, 떡볶이 등에 사용됩니다。" } },
         { name: { ko: "된장", en: "Doenjang", ja: "味噌" }, category: "식품", description: { ko: "한국의 전통 발효 콩된장으로, 깊고 구수한 맛이 일품입니다. 된장찌개 등 다양한 국물 요리에 사용됩니다.", en: "Doenjang is a fermented soybean paste, a fundamental ingredient in Korean cuisine. It has a deep, earthy, and savory flavor, commonly used in stews.", ja: "韓国의 전통 발효 콩된장으로, 깊고 구수한 맛이 일품입니다. 된장찌개 등 다양한 국물 요리에 사용됩니다。" } },
         { name: { ko: "쌈장", en: "Ssamjang", ja: "サムジャン" }, category: "식품", description: { ko: "쌈 채소와 고기를 함께 싸 먹을 때 사용하는 매콤 짭짤한 양념장입니다.", en: "Ssamjang is a spicy dipping sauce, often used with grilled meats and leafy vegetables in Korean cuisine.", ja: "쌈 채소와 고기를 함께 싸 먹을 때 사용하는 매콤 짭짤한 양념장입니다。" } },
         { name: { ko: "신라면", en: "Shin Ramyun", ja: "辛ラーメン" }, category: "식품", description: { ko: "매콤한 맛이 특징인 한국의 인기 라면입니다. 전 세계적으로 사랑받고 있습니다.", en: "Shin Ramyun is a popular Korean instant noodle with a spicy flavor, enjoyed worldwide.", ja: "매콤한 맛이 특징인 한국의 인기 라면입니다. 전 세계적으로 사랑받고 있습니다。" } },
@@ -63,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: { ko: "풋 마스크", en: "Foot Mask", ja: "フットマスク" }, category: "화장품", description: { ko: "거칠어진 발을 부드럽고 촉촉하게 가꿔주는 마스크입니다. 각질 제거 및 보습에 효과적입니다.", en: "Foot Mask softens and moisturizes rough feet, effective for exfoliation and hydration.", ja: "거칠어진 발을 부드럽고 촉촉하게 가꿔주는 마스크입니다. 각질 제거 및 보습에 효과적입니다。" } },
         { name: { ko: "헤어 에센스", en: "Hair Essence", ja: "ヘアエッセンス" }, category: "화장품", description: { ko: "손상된 모발에 영양과 윤기를 부여하는 제품입니다. 머릿결을 부드럽게 가꿔줍니다.", en: "Hair Essence provides nourishment and shine to damaged hair, making it soft and smooth.", ja: "손상된 모발에 영양과 윤기를 부여하는 제품입니다. 머릿결을 부드럽게 가꿔줍니다。" } },
         { name: { ko: "알로에젤", en: "Aloe Gel", ja: "アロエジェル" }, category: "화장품", description: { ko: "피부 진정 및 보습에 탁월한 알로에 추출물이 함유된 젤입니다. 뜨거운 햇빛에 지친 피부에 좋습니다.", en: "Aloe Gel contains aloe extract excellent for soothing and moisturizing skin, good for sun-fatigued skin.", ja: "피부 진정 및 보습에 탁월한 알로에 추출물이 함유된 젤입니다. 뜨거운 햇빛에 지친 피부에 좋습니다。" } },
-        { name: { ko: "블러셔", en: "Blusher", ja: "チーク" }, category: "화장품", description: { ko: "생기 있는 볼을 연출해주는 메이크업 제품입니다. 다양한 컬러와 제형으로 분위기를 바꿀 수 있습니다.", en: "Blusher is a makeup product that creates lively cheeks, allowing you to change your look with various colors and textures.", ja: "생기 있는 볼을 연출해주는 메이크업 제품입니다. 다양한 컬러와 제형으로 분위기를 바꿀 수 있습니다。" } },
+        { name: { ko: "블러셔", en: "Blusher", ja: "チーク" }, category: "화장품", description: { ko: "생기 있는 볼을 연출해주는 메이크업 제품입니다. 다양한 컬러와 제형으로 분위기를 바꿀 수 있습니다.", en: "Blusher is a makeup product that creates lively cheeks, allowing you to express your personality with various designs and colors.", ja: "생기 있는 볼을 연출해주는 메이크업 제품입니다. 다양한 컬러와 제형으로 분위기를 바꿀 수 있습니다。" } },
         { name: { ko: "아이섀도 팔레트", en: "Eyeshadow Palette", ja: "アイシャドウパレット" }, category: "화장품", description: { ko: "다양한 색상의 아이섀도가 담긴 팔레트입니다. 여러 가지 아이 메이크업을 연출할 수 있습니다.", en: "Eyeshadow Palette contains various colors of eyeshadow, allowing for diverse eye makeup looks.", ja: "다양한 색상의 아이섀도가 담긴 팔레트입니다. 여러 가지 아이 메이크업을 연출할 수 있습니다。" } },
 
         // 의류
@@ -89,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: { ko: "포토카드", en: "Photo Card", ja: "フォトカード" }, category: "K-POP 굿즈", description: { ko: "아이돌 멤버들의 사진이 담긴 카드입니다. 앨범 구매 시 랜덤으로 제공되기도 합니다.", en: "Photo Card is a card with pictures of idol members, sometimes randomly provided with album purchases.", ja: "아이돌 멤버들의 사진이 담긴 카드입니다. 앨범 구매 시 랜덤으로 제공되기도 합니다。" } },
         { name: { ko: "BT21 상품", en: "BT21 Goods", ja: "BT21グッズ" }, category: "K-POP 굿즈", description: { ko: "BTS와 라인프렌즈가 협업하여 만든 캐릭터 상품입니다. 인형, 문구류 등 다양한 제품이 있습니다.", en: "BT21 Goods are character products created in collaboration between BTS and LINE FRIENDS, including dolls, stationery, and more.", ja: "BTS와 라인프렌즈가 협업하여 만든 캐릭터 상품입니다. 인형, 문구류 등 다양한 제품이 있습니다。" } },
         { name: { ko: "카카오프렌즈 상품", en: "Kakao Friends Goods", ja: "カカオフレンズグッズ" }, category: "K-POP 굿즈", description: { ko: "카카오톡 이모티콘 캐릭터를 활용한 상품입니다. 인형, 생활용품 등 다양한 제품이 있습니다.", en: "Kakao Friends Goods are products featuring KakaoTalk emoticon characters, including dolls, household items, and more.", ja: "카카오톡 이모티콘 캐릭터를 활용한 상품입니다. 인형, 생활용품 등 다양한 제품이 있습니다。" } },
-        { name: { ko: "라인프렌즈 상품", en: "Line Friends Goods", ja: "ライン프렌즈グッズ" }, category: "K-POP 굿즈", description: { ko: "라인 메신저 캐릭터를 활용한 상품입니다. 전 세계적으로 인기가 많습니다.", en: "LINE FRIENDS Goods are products featuring LINE messenger characters, popular worldwide.", ja: "라인 메신저 캐릭터를 활용한 상품입니다. 전 세계적으로 인기가 많습니다。" } },
+        { name: { ko: "라인프렌즈 상품", en: "Line Friends Goods", ja: "ラインフレンज़グッズ" }, category: "K-POP 굿즈", description: { ko: "라인 메신저 캐릭터를 활용한 상품입니다. 전 세계적으로 인기가 많습니다.", en: "LINE Friends Goods are products featuring LINE messenger characters, popular worldwide.", ja: "라인 메신저 캐릭터를 활용한 상품입니다. 전 세계적으로 인기가 많습니다。" } },
         { name: { ko: "뽀로로 상품", en: "Pororo Goods", ja: "ポロログッズ" }, category: "K-POP 굿즈", description: { ko: "어린이들에게 사랑받는 뽀로로 캐릭터 상품입니다. 완구, 의류 등 다양한 제품이 있습니다.", en: "Pororo Goods are character products of the beloved children's character Pororo, including toys, apparel, and more.", ja: "어린이들에게 사랑받는 뽀로로 캐릭터 상품입니다. 완구, 의류 등 다양한 제품이 있습니다。" } },
         { name: { ko: "웹툰 단행본", en: "Webtoon Books", ja: "ウェブトゥーン単行本" }, category: "K-POP 굿즈", description: { ko: "인기 웹툰을 책으로 엮은 단행본입니다. 만화 팬들에게 좋은 선물입니다.", en: "Webtoon Books are collected editions of popular webtoons, making great gifts for comic fans.", ja: "인기 웹툰을 책으로 엮은 단행본입니다. 만화 팬들에게 좋은 선물입니다。" } },
         { name: { ko: "연예인 화보집", en: "Celebrity Photobook", ja: "芸能人写真集" }, category: "K-POP 굿즈", description: { ko: "좋아하는 연예인의 아름다운 사진이 담긴 화보집입니다. 팬들에게 소장 가치가 높습니다.", en: "Celebrity Photobook features beautiful photos of favorite celebrities, highly collectible for fans.", ja: "좋아하는 연예인의 아름다운 사진이 담긴 화보집입니다. 팬들에게 소장 가치가 높습니다。" } },
@@ -107,7 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: { ko: "전통 젓가락과 숟가락 세트", en: "Chopsticks & Spoon Set", ja: "伝統的な箸とスプーンセット" }, category: "전통 상품", description: { ko: "한국의 전통 문양이 새겨진 젓가락과 숟가락 세트입니다. 실용적이면서도 아름다운 선물입니다.", en: "Chopsticks & Spoon Set features traditional Korean patterns, a practical yet beautiful gift.", ja: "한국의 전통 문양이 새겨진 젓가락과 숟가락 세트입니다. 실용적이면서도 아름다운 선물입니다。" } },
         { name: { ko: "나전칠기 보석함", en: "Najeonchilgi Jewelry Box", ja: "螺鈿漆器の宝石箱" }, category: "전통 상품", description: { ko: "자개로 섬세하게 장식된 한국의 전통 보석함입니다. 고급스러운 선물로 좋습니다.", en: "Najeonchilgi Jewelry Box is a traditional Korean jewelry box exquisitely adorned with mother-of-pearl, making for a luxurious gift.", ja: "자개로 섬세하게 장식된 한국의 전통 보석함입니다. 고급스러운 선물로 좋습니다。" } },
         { name: { ko: "한지 공예품", en: "Hanji Crafts", ja: "韓紙工芸品" }, category: "전통 상품", description: { ko: "닥나무로 만든 한국 전통 종이인 한지로 만든 공예품입니다. 아름다운 색감과 독특한 질감이 특징입니다.", en: "Hanji Crafts are artworks made from Hanji, traditional Korean paper derived from mulberry trees, characterized by beautiful colors and unique textures.", ja: "닥나무로 만든 한국 전통 종이인 한지로 만든 공예품입니다. 아름다운 색감과 독특한 질감이 특징입니다。" } },
-        { name: { ko: "민화 그림", en: "Minhwa Painting", ja: "民画" }, category: "전통 상품", description: { ko: "한국의 서민들이 그리던 그림으로, 해학적이고 자유로운 표현이 특징입니다. 복을 기원하는 의미가 담겨 있습니다.", en: "Minhwa Painting refers to Korean folk paintings, characterized by their humorous and free expressions, often carrying wishes for good fortune.", ja: "한국의 서민들이 그리던 그림으로, 해학적이고 자유로운 표현이 특징입니다. 복을 기원하는 의미가 담겨 있습니다。" } },
+        { name: { ko: "민화 그림", en: "Minhwa Painting", ja: "민화" }, category: "전통 상품", description: { ko: "한국의 서민들이 그리던 그림으로, 해학적이고 자유로운 표현이 특징입니다. 복을 기원하는 의미가 담겨 있습니다.", en: "Minhwa Painting refers to Korean folk paintings, characterized by their humorous and free expressions, often carrying wishes for good fortune.", ja: "한국의 서민들이 그리던 그림으로, 해학적이고 자유로운 표현이 특징입니다. 복을 기원하는 의미가 담겨 있습니다。" } },
         { name: { ko: "탈", en: "Traditional Mask", ja: "伝統的な仮面" }, category: "전통 상품", description: { ko: "한국의 전통 공연에서 사용되던 가면입니다. 다양한 표정과 색감으로 해학적인 아름다움을 표현합니다.", en: "Traditional Mask is a mask used in Korean traditional performances, expressing humorous beauty with various expressions and colors.", ja: "한국의 전통 공연에서 사용되던 가면입니다. 다양한 표정과 색감으로 해학적인 아름다움을 표현합니다。" } },
         { name: { ko: "촛대", en: "Candlestick", ja: "燭台" }, category: "전통 상품", description: { ko: "한국의 전통 문양이나 디자인이 적용된 촛대입니다. 인테리어 소품으로 활용하기 좋습니다.", en: "Candlestick features traditional Korean patterns or designs, excellent for use as an interior decoration item.", ja: "한국의 전통 문양이나 디자인이 적용된 촛대입니다. 인테리어 소품으로 활용하기 좋습니다。" } },
         { name: { ko: "다기 세트", en: "Tea Set", ja: "茶器セット" }, category: "전통 상품", description: { ko: "한국의 전통 차를 즐길 수 있는 다기 세트입니다. 도자기의 아름다움을 느낄 수 있습니다.", en: "Tea Set allows you to enjoy traditional Korean tea, appreciating the beauty of its ceramics.", ja: "한국의 전통 차를 즐길 수 있는 다기 세트입니다. 도자기의 아름다움을 느낄 수 있습니다。" } },
@@ -128,6 +139,25 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: { ko: "전통 문양 텀블러", en: "Traditional Pattern Tumbler", ja: "伝統文様のタンブラー" }, category: "전통 상품", description: { ko: "한국의 전통 문양이 새겨진 텀블러입니다. 실용적이면서도 한국적인 멋을 느낄 수 있습니다.", en: "Traditional Pattern Tumbler features traditional Korean patterns, offering a practical item with Korean charm.", ja: "한국의 전통 문양이 새겨진 텀블러입니다. 실용적이면서도 한국적인 멋을 느낄 수 있습니다。" } }
     ];
 
+    const souvenirs = initialSouvenirs.map(s => {
+        const imageUrlPrefix = 'https://raw.githubusercontent.com/snowingx5-boop/product-builder-lecture/main/public/images/';
+        let imageUrl = '';
+        const koName = s.name.ko;
+
+        // Special handling for the three existing images
+        if (koName === '김치') {
+            imageUrl = imageUrlPrefix + 'kimchi.jpg';
+        } else if (koName === '고추장') {
+            imageUrl = imageUrlPrefix + 'gochujang.jpg';
+        } else if (koName === '된장') {
+            imageUrl = imageUrlPrefix + 'doenjang.jpg';
+        } else {
+            // For all other souvenirs, use the slugified name
+            imageUrl = imageUrlPrefix + slugify(koName) + '.jpg';
+        }
+        return { ...s, imageUrl: imageUrl };
+    });
+
     // Modal elements
     const souvenirModal = document.getElementById('souvenirModal');
     const closeButton = document.querySelector('.close-button');
@@ -136,8 +166,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const grid = document.querySelector('.souvenir-grid');
     const categoryLinks = document.querySelectorAll('.dropdown-menu a[data-category]');
-    // const searchInput = document.getElementById('searchInput'); // Removed
-    // const searchBtn = document.getElementById('searchBtn');     // Removed
     const langSwitcherLinks = document.querySelectorAll('#lang-switcher a');
 
     function renderItems(items) {
@@ -151,18 +179,13 @@ document.addEventListener('DOMContentLoaded', function() {
             nameSpan.textContent = souvenir.name[currentLang];
             item.appendChild(nameSpan);
 
-            const koName = souvenir.name.ko;
-            if (koName === '김치' || koName === '고추장' || koName === '된장') {
-                let imageName = '';
-                if (koName === '김치') imageName = 'kimchi';
-                if (koName === '고추장') imageName = 'gochujang';
-                if (koName === '된장') imageName = 'doenjang';
-                
-                item.style.backgroundImage = `url('https://raw.githubusercontent.com/snowingx5-boop/product-builder-lecture/main/public/images/${imageName}.jpg')`;
+            // Use the imageUrl property
+            if (souvenir.imageUrl) {
+                item.style.backgroundImage = `url('${souvenir.imageUrl}')`;
                 item.style.backgroundSize = 'cover';
                 item.style.backgroundPosition = 'center';
-                nameSpan.style.color = 'white';
-                nameSpan.style.textShadow = '1px 1px 2px rgba(0,0,0,0.7)';
+                nameSpan.style.color = 'white'; // Keep text visible on image
+                nameSpan.style.textShadow = '1px 1px 2px rgba(0,0,0,0.7)'; // Keep text visible on image
             }
             grid.appendChild(item);
         });
@@ -202,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const key = el.getAttribute('data-translate-key');
             if (translations[key] && translations[key][lang]) {
                 if (el.tagName === 'INPUT' && el.type === 'search') {
-                    // el.placeholder = translations[key][lang]; // Search input is removed
+                    // Search input is removed
                 } else {
                     el.textContent = translations[key][lang];
                 }
@@ -231,26 +254,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
-    // function handleSearch() { // Search functionality removed
-    //     const searchTerm = searchInput.value.toLowerCase();
-    //     if (!searchTerm) {
-    //         renderItems(souvenirs);
-    //         return;
-    //     }
-    //     const filteredSouvenirs = souvenirs.filter(souvenir => 
-    //         souvenir.name[currentLang].toLowerCase().includes(searchTerm)
-    //     );
-    //     renderItems(filteredSouvenirs);
-    // }
-
-    // searchBtn.addEventListener('click', handleSearch); // Search functionality removed
-    
-    // searchInput.addEventListener('input', function() { // Search functionality removed
-    //     if (searchInput.value === '') {
-    //         renderItems(souvenirs);
-    //     }
-    // });
 
     // Initial Render
     updateLanguage(currentLang); 
